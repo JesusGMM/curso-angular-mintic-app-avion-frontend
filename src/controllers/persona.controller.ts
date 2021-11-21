@@ -1,3 +1,4 @@
+import {service} from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -7,23 +8,27 @@ import {
   Where,
 } from '@loopback/repository';
 import {
-  post,
-  param,
+  del,
   get,
   getModelSchemaRef,
+  param,
   patch,
+  post,
   put,
-  del,
   requestBody,
   response,
 } from '@loopback/rest';
 import {Persona} from '../models';
 import {PersonaRepository} from '../repositories';
+import {AutenticacionService} from '../services';
+const fetch = require('node-fetch');
 
 export class PersonaController {
   constructor(
     @repository(PersonaRepository)
-    public personaRepository : PersonaRepository,
+    public personaRepository: PersonaRepository,
+    @service(AutenticacionService)
+    public servicioAutenticacion: AutenticacionService,
   ) {}
 
   @post('/personas')
@@ -44,7 +49,22 @@ export class PersonaController {
     })
     persona: Omit<Persona, 'id'>,
   ): Promise<Persona> {
-    return this.personaRepository.create(persona);
+    let clave = this.servicioAutenticacion.GenerarClave();
+    let claveCifrada = this.servicioAutenticacion.CifrarClave(clave);
+    persona.password = claveCifrada;
+    let p = await this.personaRepository.create(persona);
+
+    //envio el correo al usuariop registrado.
+    let destino = persona.correo;
+    let asunto = 'Registro exitoso';
+    let contenido = `Buenos días ${persona.nombre}, nombre usuario: ${persona.correo} - contraseña: ${clave}`;
+    fetch(
+      `http://127.0.0.1:5000/email?destino=${destino}&asunto=${asunto}&contenido=${contenido}`,
+    ).then((data: any) => {
+      console.log(data);
+    });
+
+    return p;
   }
 
   @get('/personas/count')
@@ -52,9 +72,7 @@ export class PersonaController {
     description: 'Persona model count',
     content: {'application/json': {schema: CountSchema}},
   })
-  async count(
-    @param.where(Persona) where?: Where<Persona>,
-  ): Promise<Count> {
+  async count(@param.where(Persona) where?: Where<Persona>): Promise<Count> {
     return this.personaRepository.count(where);
   }
 
@@ -106,7 +124,8 @@ export class PersonaController {
   })
   async findById(
     @param.path.string('id') id: string,
-    @param.filter(Persona, {exclude: 'where'}) filter?: FilterExcludingWhere<Persona>
+    @param.filter(Persona, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Persona>,
   ): Promise<Persona> {
     return this.personaRepository.findById(id, filter);
   }
