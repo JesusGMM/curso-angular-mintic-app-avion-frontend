@@ -71,16 +71,8 @@ export class Persona extends Entity {
   @hasMany(() => Solicitudes)
   solicitudes: Solicitudes[];
 
-  @property({
-    type: 'string',
-  })
-  avionesId?: string;
-
   @hasOne(() => Aviones, {keyTo: 'responsableId'})
   aviones: Aviones;
-
-  @hasOne(() => Aviones, {keyTo: 'responsableId'})
-  responsable: Aviones;
 
   constructor(data?: Partial<Persona>) {
     super(data);

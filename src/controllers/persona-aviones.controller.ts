@@ -42,7 +42,7 @@ export class PersonaAvionesController {
     @param.path.string('id') id: string,
     @param.query.object('filter') filter?: Filter<Aviones>,
   ): Promise<Aviones> {
-    return this.personaRepository.responsable(id).get(filter);
+    return this.personaRepository.aviones(id).get(filter);
   }
 
   @post('/personas/{id}/aviones', {
@@ -67,7 +67,7 @@ export class PersonaAvionesController {
       },
     }) aviones: Omit<Aviones, 'id'>,
   ): Promise<Aviones> {
-    return this.personaRepository.responsable(id).create(aviones);
+    return this.personaRepository.aviones(id).create(aviones);
   }
 
   @patch('/personas/{id}/aviones', {
@@ -90,7 +90,7 @@ export class PersonaAvionesController {
     aviones: Partial<Aviones>,
     @param.query.object('where', getWhereSchemaFor(Aviones)) where?: Where<Aviones>,
   ): Promise<Count> {
-    return this.personaRepository.responsable(id).patch(aviones, where);
+    return this.personaRepository.aviones(id).patch(aviones, where);
   }
 
   @del('/personas/{id}/aviones', {
@@ -105,6 +105,6 @@ export class PersonaAvionesController {
     @param.path.string('id') id: string,
     @param.query.object('where', getWhereSchemaFor(Aviones)) where?: Where<Aviones>,
   ): Promise<Count> {
-    return this.personaRepository.responsable(id).delete(where);
+    return this.personaRepository.aviones(id).delete(where);
   }
 }
