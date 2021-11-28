@@ -6,3 +6,4 @@ export * from './aviones-solicitudes.controller';
 export * from './persona.controller';
 export * from './solicitud.controller';
 export * from './avion.controller';
+export * from './persona-aviones.controller';

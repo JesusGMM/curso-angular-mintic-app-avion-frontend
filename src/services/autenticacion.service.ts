@@ -45,7 +45,7 @@ export class AutenticacionService {
       {
         data: {
           id: persona.id,
-          correo: persona.correo,
+          perfil: persona.rol,
           nombre: persona.nombre,
         },
       },

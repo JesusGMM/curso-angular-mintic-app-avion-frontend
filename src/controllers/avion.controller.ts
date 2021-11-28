@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {
   Count,
   CountSchema,
@@ -26,6 +27,7 @@ export class AvionController {
     public avionesRepository : AvionesRepository,
   ) {}
 
+  @authenticate("admin","acesor")
   @post('/aviones')
   @response(200, {
     description: 'Aviones model instance',

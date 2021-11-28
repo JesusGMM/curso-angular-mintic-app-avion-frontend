@@ -1,8 +1,9 @@
 import {inject, Getter} from '@loopback/core';
-import {DefaultCrudRepository, repository, HasManyRepositoryFactory} from '@loopback/repository';
+import {DefaultCrudRepository, repository, HasManyRepositoryFactory, HasOneRepositoryFactory} from '@loopback/repository';
 import {SmartairDataSource} from '../datasources';
-import {Persona, PersonaRelations, Solicitudes} from '../models';
+import {Persona, PersonaRelations, Solicitudes, Aviones} from '../models';
 import {SolicitudesRepository} from './solicitudes.repository';
+import {AvionesRepository} from './aviones.repository';
 
 export class PersonaRepository extends DefaultCrudRepository<
   Persona,
@@ -12,10 +13,14 @@ export class PersonaRepository extends DefaultCrudRepository<
 
   public readonly solicitudes: HasManyRepositoryFactory<Solicitudes, typeof Persona.prototype.id>;
 
+  public readonly responsable: HasOneRepositoryFactory<Aviones, typeof Persona.prototype.id>;
+
   constructor(
-    @inject('datasources.Smartair') dataSource: SmartairDataSource, @repository.getter('SolicitudesRepository') protected solicitudesRepositoryGetter: Getter<SolicitudesRepository>,
+    @inject('datasources.Smartair') dataSource: SmartairDataSource, @repository.getter('SolicitudesRepository') protected solicitudesRepositoryGetter: Getter<SolicitudesRepository>, @repository.getter('AvionesRepository') protected avionesRepositoryGetter: Getter<AvionesRepository>,
   ) {
     super(Persona, dataSource);
+    this.responsable = this.createHasOneRepositoryFactoryFor('responsable', avionesRepositoryGetter);
+    this.registerInclusionResolver('responsable', this.responsable.inclusionResolver);
     this.solicitudes = this.createHasManyRepositoryFactoryFor('solicitudes', solicitudesRepositoryGetter,);
     this.registerInclusionResolver('solicitudes', this.solicitudes.inclusionResolver);
   }
