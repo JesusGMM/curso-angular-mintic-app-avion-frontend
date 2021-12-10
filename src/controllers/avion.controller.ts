@@ -8,13 +8,13 @@ import {
   Where,
 } from '@loopback/repository';
 import {
-  post,
-  param,
+  del,
   get,
   getModelSchemaRef,
+  param,
   patch,
+  post,
   put,
-  del,
   requestBody,
   response,
 } from '@loopback/rest';
@@ -24,10 +24,10 @@ import {AvionesRepository} from '../repositories';
 export class AvionController {
   constructor(
     @repository(AvionesRepository)
-    public avionesRepository : AvionesRepository,
+    public avionesRepository: AvionesRepository,
   ) {}
 
-  @authenticate("admin","acesor")
+  @authenticate('admin')
   @post('/aviones')
   @response(200, {
     description: 'Aviones model instance',
@@ -54,12 +54,11 @@ export class AvionController {
     description: 'Aviones model count',
     content: {'application/json': {schema: CountSchema}},
   })
-  async count(
-    @param.where(Aviones) where?: Where<Aviones>,
-  ): Promise<Count> {
+  async count(@param.where(Aviones) where?: Where<Aviones>): Promise<Count> {
     return this.avionesRepository.count(where);
   }
 
+  @authenticate.skip()
   @get('/aviones')
   @response(200, {
     description: 'Array of Aviones model instances',
@@ -108,7 +107,8 @@ export class AvionController {
   })
   async findById(
     @param.path.string('id') id: string,
-    @param.filter(Aviones, {exclude: 'where'}) filter?: FilterExcludingWhere<Aviones>
+    @param.filter(Aviones, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Aviones>,
   ): Promise<Aviones> {
     return this.avionesRepository.findById(id, filter);
   }
