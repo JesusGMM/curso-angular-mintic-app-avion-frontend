@@ -7,3 +7,5 @@ export * from './persona.controller';
 export * from './solicitud.controller';
 export * from './avion.controller';
 export * from './persona-aviones.controller';
+export * from './carga-archivos.controller';
+export * from './descarga-archivos-controller.controller';

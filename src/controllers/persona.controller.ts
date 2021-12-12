@@ -61,6 +61,28 @@ export class PersonaController {
     }
   }
 
+  @post('/validar-correo', {
+    responses: {
+      '200': {
+        description: 'Identificar usuarios',
+      },
+    },
+  })
+  async validarEmail(@requestBody() credenciales: Credenciales) {
+    let p = await this.servicioAutenticacion.validarCorreo(
+      credenciales.usuario,
+    );
+    if (p) {
+      return {
+        datos: {
+          correo: p.correo,
+        },
+      };
+    } else {
+      throw new HttpErrors[401]('El correo no existe puede continuar');
+    }
+  }
+
   @post('/personas')
   @response(200, {
     description: 'Persona model instance',

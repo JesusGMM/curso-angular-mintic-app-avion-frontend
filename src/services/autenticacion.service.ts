@@ -62,4 +62,16 @@ export class AutenticacionService {
       return false;
     }
   }
+
+  validarCorreo(correo: string) {
+    try {
+      let p = this.personaRepository.findOne({
+        where: {correo},
+      });
+      if (p) return p;
+      else return false;
+    } catch {
+      return false;
+    }
+  }
 }
